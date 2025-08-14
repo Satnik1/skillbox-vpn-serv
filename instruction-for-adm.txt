@@ -1,0 +1,194 @@
+=================================================================
+Руководство системного администратора: Развертывание VPN-инфраструктуры
+=================================================================
+
+1. Подготовка хостовой машины
+--------------------------------
+1.1. Установите YC CLI (https://yandex.cloud/ru/docs/cli/quickstart#install):
+    curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+    yc init
+
+1.2. Сгенерируйте SSH-ключи:
+    ssh-keygen -t ed25519 -C "<опциональный_комментарий>"
+
+
+1.3. Склонируйте репозиторий:
+    git clone https://github.com/Satnik1/skillbox-vpn-serv.git
+    cd skillbox-vpn-serv
+
+2. Настройка конфигураций
+--------------------------------
+2.1. В файлах конфигурации замените блок ssh_authorized_keys на ваш публичный ключ:
+    - rsa_conf.yaml
+    - vpn_conf.yaml
+    - prometheus_conf.yaml
+
+    Пример:
+    users:
+    - name: rsa-user
+      ssh_authorized_keys:
+      - ......  # Ваш ключ .pub из ~/.ssh/
+
+3. Запуск виртуальных машин
+--------------------------------
+3.1. Запустите ВМ:
+    cd rsa_instance
+    ./rsa_instance.sh
+    cd ../vpn_instance 
+    ./VPN_instance.sh
+    cd ../prometheus_instance 
+    ./prometheus_instance.sh
+
+3.2. Проверьте подключение:
+    ssh -l rsa-user <rsa_ip>
+    ssh -l vpn-user <vpn_ip>
+    ssh -l prometheus-user <prom_ip>
+
+4. Создание статических IP (https://yandex.cloud/ru/docs/vpc/operations/set-static-ip)
+--------------------------------
+4.1. Создайте адреса для каждой ВМ:
+    yc vpc address list
+    yc vpc address update --reserved=true e2l46k8conff******** #ID
+
+4.2. При необходимости запросите увеличение квоты:
+    - https://center.yandex.cloud/support/tickets
+
+
+5. Настройка бэкапов
+--------------------------------
+5.1. Создайте бакет и сервисный аккаунт:
+   yc storage bucket create --name backup-inf
+   yc iam service-account create --name backup-sa
+
+5.2. Назначьте права:
+    yc resource-manager folder add-access-binding (указать название каталога) --role storage.editor --subject serviceAccount: (указать ID сревисного аккаунта (yc iam service-accounts list))
+
+5.3. Сгенерируйте ключи доступа:
+    yc iam access-key create --service-account-name backup-sa (ключи сохранить надежно)
+
+6. Развертывание компонентов
+--------------------------------
+6.1. Скопируйте файлы на ВМ:
+
+    # На rsa-instance
+    scp ca_center.sh ca-settings_0.1-1_all.deb rsa-user@<rsa_ip>:~/
+
+    # На vpn-instance
+    scp vpn_center.sh vpn-settings_0.1-1ubuntu3_all.deb client-conf_0.1-1_all.deb vpn-user@<vpn_ip>:~/
+
+    # На prometheus-instance
+    scp prometheus_center.sh prometheus-alertm-settings_0.1-2_all.deb prometheus-user@<prom_ip>:~/
+
+6.2. На каждой ВМ выполните:
+    sudo ./название_скрипта.sh
+    sudo dpkg -i название_пакета.deb
+
+7. Настройка PKI и сертификатов
+--------------------------------
+7.1. На rsa-instance:
+    cd ~/easy-rsa
+    ./easyrsa build-ca
+    
+7.2. С ЛОКАЛЬНОЙ МАШИНЫ:
+    # Скачайте корневой сертификат
+    scp rsa-user@<rsa_ip>:~/easy-rsa/pki/ca.crt .
+    
+    # Загрузите его на vpn-instance
+    scp ca.crt vpn-user@<vpn_ip>:~/easy-rsa/.
+
+7.3. На vpn-instance:
+    cd ~/easy-rsa
+    ./easyrsa gen-req server nopass
+    ./easyrsa gen-req client-1 nopass
+    openvpn --genkey --secret ta.key
+    
+7.4. С ЛОКАЛЬНОЙ МАШИНЫ:
+    # Скачайте запросы сертификатов
+    scp vpn-user@<vpn_ip>:~/easy-rsa/pki/reqs/server.req .
+    scp vpn-user@<vpn_ip>:~/easy-rsa/pki/reqs/client-1.req .
+    
+    # Загрузите их на rsa-instance
+    scp server.req client-1.req rsa-user@<rsa_ip>:~/easy-rsa/pki/reqs/.
+
+7.5. На rsa-instance:
+    cd ~/easy-rsa
+    ./easyrsa sign-req server server
+    ./easyrsa sign-req client client-1
+
+7.6. С ЛОКАЛЬНОЙ МАШИНЫ:
+    # Скачайте подписанные сертификаты
+    scp rsa-user@<rsa_ip>:~/easy-rsa/pki/issued/server.crt .
+    scp rsa-user@<rsa_ip>:~/easy-rsa/pki/issued/client-1.crt .
+    
+    # Загрузите на vpn-instance
+    scp server.crt client-1.crt vpn-user@<vpn_ip>:~/easy-rsa/.
+    
+
+8. Финалная настройка VPN
+--------------------------------
+8.1. На vpn-instance скопируйте файлы:
+    sudo cp ~/easy-rsa/server.crt /etc/openvpn/server/
+    sudo cp ~/easy-rsa/pki/private/server.key /etc/openvpn/server/
+    sudo cp ~/easy-rsa/ta.key /etc/openvpn/server/
+    sudo cp ~/easy-rsa/ca.crt /etc/openvpn/server/
+    sudo cp ~/easy-rsa/client-1.crt /etc/openvpn/clients_config/keys/
+    sudo cp ~/easy-rsa/pki/private/client-1.key /etc/openvpn/clients_config/keys/
+    sudo cp ~/easy-rsa/ta.key /etc/openvpn/clients_config/keys/
+    sudo cp ~/easy-rsa/ca.crt /etc/openvpn/clients_config/keys/
+
+8.2. Настройте права:
+    sudo chown -R vpn-user:vpn-user /etc/openvpn/clients_config
+    sudo chmod 700 /etc/openvpn/clients_config
+
+8.3. Запустите OpenVPN:
+    sudo systemctl -f enable openvpn-server@server
+    sudo systemctl start openvpn-server@server
+    sudo systemctl status openvpn-server@server
+
+9. Генерация клиентского конфига
+--------------------------------
+9.1. Создайте конфиг:
+    cd /etc/openvpn/clients_config/conf
+    sudo ./make_config.sh client-1
+
+9.2. Отредактируйте файл:
+    sudo nano client-1.ovpn
+    # Закомментируйте строку: # tls-crypt ta.key 1
+
+9.3. Скачайте конфиг:
+    scp vpn-user@<vpn_ip>:/etc/openvpn/clients_config/conf/client1.ovpn .
+
+10. Настройка оповещений в Alertmanager
+----------------------------------------
+10.1. Получение пароля приложения в Yandex:
+    1. Перейдите: https://id.yandex.ru/security/app-passwords
+    2. Выберите "Почта"
+    3. Введите имя сервиса (например: "Alertmanager")
+    4. Нажмите "Создать пароль"
+    5. Сохраните сгенерированный пароль (пример: "abracadabra123")
+
+10.2. Редактирование конфига Alertmanager:
+    sudo vim /etc/prometheus/alertmanager.yml
+
+    Замените блок receivers на:
+    ----------------------------
+    receivers:
+    - name: 'admin-alerts'
+      email_configs:
+      - to: 'your_email@yandex.ru'      # Ваша Yandex почта
+        from: 'your_email@yandex.ru'    # Та же почта
+        smarthost: 'smtp.yandex.ru:587'
+        auth_username: 'your_login'     # Логин без @yandex.ru
+        auth_identity: 'your_login'     # Тот же логин
+        auth_password: 'app_password'   # Пароль из п. 10.1
+        require_tls: true
+    ----------------------------
+10.3. Перезапуск Prometheus и Alertmanager
+    sudo systemctl restart prometheus
+    sudo systemctl restart prometheus-alertmanager
+    sudo systemctl status prometheus
+    sudo systemctl status prometheus-alertmaneger
+
+=== ТЕХНИЧЕСКАЯ ПОДДЕРЖКА ===
+Экстренные случаи: ****@****.**
+Документация: https://*****.***/***

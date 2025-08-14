@@ -1,0 +1,22 @@
+#cloud-config
+#
+datasource:
+  Ec2:
+    strict_id: false
+ssh_pwauth: no
+users:
+- name: rsa-user
+  sudo: 'ALL=(ALL) NOPASSWD:ALL'
+  shell: /bin/bash
+  ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8HXet5yGrN7Dl6FGN7kJGzx5n+ZtHvvUUPzqXJokwyCz0lpBiUof172Ms6C3/L6mbixgSppmYr12lNx3Pim8/Ney2AAMJM8ZPKY1eDjMtvoNi3ZIk6ONxbVE5ST0mNMH3Oh1npRiYApOIiccohNb6Jsm09pFfrh76BClL5oiZnJRgJiwCPnLzSSmrgMxliEjeF+OzuIXo9WtMU1xJQMssu4J9Hca8tU+hwLPhYjy+bRmiRmkRSobd8vvdG3z/4PFBrlo0lqNITOy90K7GfT7+Non9jFer8qmbR0RMXylUQazJJ4tO8gArYxdYr1ejPuBAslKFyQzY85D9r+N90E3F Timeweb Machine
+
+
+runcmd:
+  - apt-get update 
+  - mkdir /home/rsa-user/easy-rsa    
+  - apt-get install -y easy-rsa prometheus-node-exporter
+  - ln -s /usr/share/easy-rsa/* /home/rsa-user/easy-rsa/
+  - chown -R rsa-user.rsa-user /home/rsa-user/easy-rsa
+  - chmod 700 /home/rsa-user/easy-rsa
+
