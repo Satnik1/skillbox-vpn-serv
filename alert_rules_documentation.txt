@@ -1,0 +1,119 @@
+=================================================================
+Документация по правилам алертов Prometheus
+=================================================================
+
+1. Группа алертов: ca_instance (Центр сертификации)
+--------------------------------------------------
+1.1. CA_node_exporter_down
+    • Условие: up{job="node"} == 0
+    • Длительность: 10s
+    • Описание: Экспортер метрик Node Exporter недоступен на сервере центра сертификации. Это означает, что система мониторинга не получает данные о состоянии сервера.
+
+1.2. CA_High_CPU_utiluzation
+    • Условие: node_load1{job="node"} > 0.9
+    • Длительность: 1m
+    • Описание: Высокая загрузка CPU (load average > 0.9) в течение 1 минуты. Сервер испытывает перегрузку вычислительных ресурсов.
+
+1.3. CA_High_memory_utiluzation
+    • Условие: ((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100) < 10
+    • Длительность: 1m
+    • Описание: Менее 10% свободной оперативной памяти доступно в течение 1 минуты. Риск нехватки памяти и снижения производительности.
+
+1.4. CA_Disc_space_problem
+    • Условие: ((node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100) < 10
+    • Длительность: 10m
+    • Описание: Менее 10% свободного места на корневом разделе (/). Серверу грозит остановка работы из-за нехватки дискового пространства.
+
+1.5. CA_High_port_incoming_utilization
+    • Условие: (rate(node_network_receive_bytes_total[5m]) / 1024 / 1024) > 150
+    • Длительность: 5s
+    • Описание: Входящий сетевой трафик превышает 150 МБ/с. Возможна DDoS-атака или аномальная сетевая активность.
+
+1.6. CA_High_port_outcoming_utilization
+    • Условие: (rate(node_network_transmit_bytes_total[5m]) / 1024 / 1024) > 150
+    • Длительность: 5s
+    • Описание: Исходящий сетевой трафик превышает 150 МБ/с. Возможна утечка данных или нештатная сетевая активность.
+
+2. Группа алертов: vpn_instance (VPN-сервер)
+--------------------------------------------
+2.1. Vpn_node_exporter_down
+    • Условие: up{job="node"} == 0
+    • Длительность: 10s
+    • Описание: Node Exporter недоступен на VPN-сервере. Мониторинг состояния сервера невозможен.
+
+2.2. Vpn_exporter_down
+    • Условие: up{job="openvpn"} == 0
+    • Длительность: 10s
+    • Описание: OpenVPN Exporter недоступен. Нет данных о работе VPN-сервера.
+
+2.3. VpnDown
+    • Условие: openvpn_up == 0
+    • Длительность: 10s
+    • Описание: Сервис OpenVPN не работает. VPN-сервер недоступен для подключений.
+
+2.4. Vpn_NoClientConnected
+    • Условие: openvpn_server_connected_clients == 0
+    • Длительность: 10s
+    • Описание: Нет активных подключенных VPN-клиентов. Сервис не используется или возникли проблемы с подключением.
+
+2.5. Vpn_High_CPU_utiluzation
+    • Условие: node_load1{job="node"} > 0.9
+    • Длительность: 1m
+    • Описание: Высокая загрузка CPU (load average > 0.9) в течение 1 минуты.
+
+2.6. Vpn_High_memory_utiluzation
+    • Условие: ((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100) < 10
+    • Длительность: 1m
+    • Описание: Менее 10% свободной оперативной памяти.
+
+2.7. Vpn_Disc_space_problem
+    • Условие: ((node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100) < 10
+    • Длительность: 10m
+    • Описание: Менее 10% свободного места на корневом разделе.
+
+2.8. Vpn_High_port_incoming_utilization
+    • Условие: (rate(node_network_receive_bytes_total[5m]) / 1024 / 1024) > 150
+    • Длительность: 5s
+    • Описание: Входящий трафик > 150 МБ/с.
+
+2.9. Vpn_High_port_outcoming_utilization
+    • Условие: (rate(node_network_transmit_bytes_total[5m]) / 1024 / 1024) > 150
+    • Длительность: 5s
+    • Описание: Исходящий трафик > 150 МБ/с.
+
+3. Группа алертов: prometheus_instance (Сервер мониторинга)
+----------------------------------------------------------
+3.1. Monitor_node_exporter_down
+    • Условие: up{job="node"} == 0
+    • Длительность: 10s
+    • Описание: Node Exporter недоступен на сервере мониторинга.
+
+3.2. Monitor_prometheus_exporter_down
+    • Условие: up{job="prometheus"} == 0
+    • Длительность: 10s
+    • Описание: Экспортер Prometheus недоступен. Нет данных о работе системы мониторинга.
+
+3.3. Monitor_High_CPU_utiluzation
+    • Условие: node_load1{job="node"} > 0.9
+    • Длительность: 1m
+    • Описание: Высокая загрузка CPU (load average > 0.9).
+
+3.4. Monitor_High_memory_utiluzation
+    • Условие: ((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100) < 10
+    • Длительность: 1m
+    • Описание: Менее 10% свободной оперативной памяти.
+
+3.5. Monitor_Disc_space_problem
+    • Условие: ((node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100) < 10
+    • Длительность: 10m
+    • Описание: Менее 10% свободного места на корневом разделе.
+
+3.6. Monitor_High_port_incoming_utilization
+    • Условие: (rate(node_network_receive_bytes_total[5m]) / 1024 / 1024) > 150
+    • Длительность: 5s
+    • Описание: Входящий трафик > 150 МБ/с.
+
+3.7. Monitor_High_port_outcoming_utilization
+    • Условие: (rate(node_network_transmit_bytes_total[5m]) / 1024 / 1024) > 150
+    • Длительность: 5s
+    • Описание: Исходящий трафик > 150 МБ/с.
