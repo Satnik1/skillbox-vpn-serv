@@ -174,7 +174,7 @@ fi
 
 aws configure
 if ! aws s3 ls s3://backup-inf/ --endpoint-url=https://storage.yandexcloud.net &>/dev/null; then
-    echo "Ошибка подключения к Object Storage!"
+    echo "ERROR connecting to Object Storage!"
     exit 1
 fi
 
