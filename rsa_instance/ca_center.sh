@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e 
 
-# Проверка прав администратора
+# checking administrator rights
 if [ "$(id -u)" -ne 0 ]; then
   echo "ERROR: Script must run as root" >&2
   exit 1
