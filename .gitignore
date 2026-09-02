@@ -4,6 +4,7 @@ sources/**/*.buildinfo
 sources/**/*.tar.*
 sources/**/*.changes
 sources/**/*.deb
+sources/**/*.dsc
 
 # Tmp files
 sources/**/debian/.debhelper/
@@ -12,3 +13,4 @@ sources/**/debian/files
 sources/**/debian/*-settings/
 sources/**/debian/*-conf/
 sources/**/debian/*.substvars
+sources/**/.pc/

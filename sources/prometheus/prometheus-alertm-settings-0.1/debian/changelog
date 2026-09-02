@@ -1,0 +1,20 @@
+prometheus-alertm-settings (0.1-3) UNRELEASED; urgency=medium
+
+  [ Nikita ]
+  * Some changes
+  * Some changes 
+  * And... some changes
+
+  [ satnik ]
+  * Remove secrets from alertmanager.yaml
+  * Create template for put secret in config from variable
+  * Add in postinst script for check empty variable and used envsubst for
+    template
+
+ -- satnik <satnik@mrRobot>  Tue, 01 Sep 2026 12:50:45 +0000
+
+prometheus-alertm-settings (0.1-1) unstable; urgency=medium
+
+  * Initial release 
+
+ -- Nikita <na@satkanov.ru>  Mon, 04 Aug 2025 17:06:47 +0300

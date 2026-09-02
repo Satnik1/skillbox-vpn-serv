@@ -1,0 +1,15 @@
+Source: prometheus-alertm-settings
+Section: unknown
+Priority: optional
+Maintainer: Nikita <na@satkanov.ru>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/prometheus-alertm-settings
+#Vcs-Git: https://salsa.debian.org/debian/prometheus-alertm-settings.git
+
+Package: prometheus-alertm-settings
+Architecture: all
+Depends: prometheus, prometheus-alertmanager
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

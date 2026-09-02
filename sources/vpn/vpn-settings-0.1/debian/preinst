@@ -1,0 +1,15 @@
+#!/bin/bash
+# preinst script for vpn-settings
+#
+# see: dh_installdeb(1)
+
+set -e
+
+if [ -f /etc/openvpn/server/server.conf ]; then
+	rm -f /etc/openvpn/server/server.conf
+fi
+
+
+
+exit 0
+

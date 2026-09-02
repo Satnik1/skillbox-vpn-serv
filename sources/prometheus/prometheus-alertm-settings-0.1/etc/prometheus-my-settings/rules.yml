@@ -1,0 +1,97 @@
+groups:
+
+- name: common_alerts
+  rules:
+  - alert: Node_exporter_down
+    expr: up{job="node"} == 0
+    for: 10s
+    annotations:
+      title: '{{$labels.instance}} Node Exporter Down'
+      description: '{{$labels.instance}} Node Exporter Down'
+    labels:
+      severity: 'crit'
+
+  - alert: High_CPU_utiluzation
+    expr: node_load1{job="node"} > 0.9
+    for: 1m
+    annotations:
+      title: '{{$labels.instance}} High CPU utiluzation'
+      description: '{{$labels.instance}} High CPU utiluzation'
+    labels:
+      severity: 'crit'
+
+  - alert: High memory utiluzation    expr: ((node_memory_MemAvailable_bytes{job="node"} / node_memory_MemTotal_bytes{job="node"}) * 100) < 10
+    for: 1m
+    annotations:
+      title: '{{$labels.instance}} High memory utiluzation'
+      description: '{{$labels.instance}} High memory utiluzation'
+    labels:
+      severity: 'crit'
+
+  - alert: Disc_space_problem
+    expr: ((node_filesystem_avail_bytes{job="node", mountpoint="/",fstype!="rootfs"} / node_filesystem_size_bytes{job="node", mountpoint="/",fstype!="rootfs"}) * 100) < 10
+    for: 10m
+    annotations:
+      title: '{{$labels.instance}} Disk 90% full'
+      description: '{{$labels.instance}} Disk 90% full'
+    labels:
+      severity: 'crit'
+
+  - alert: High_port_incoming_utilization
+    expr: (rate(node_network_receive_bytes_total{job="node", device="eth0"}[5m]) / 1024 / 1024) > 150
+    for: 5s
+    annotations:
+      title: '{{$labels.instance}} High port input load'
+      description: '{{$labels.instance}} Incoming port load > 150 Mb/s'
+    labels:
+      severity: 'crit'
+
+  - alert: High_port_outcoming_utilization
+    expr: (rate(node_network_transmit_bytes_total{ job="node", device="eth0"}[5m]) / 1024 / 1024) > 150
+    for: 5s
+    annotations:
+      title: '{{$labels.instance}} High outbound port utilization'
+      description: 'Outcoming port load > 150 Mb/s'
+    labels:
+      severity: 'crit'
+
+- name: vpn_instance
+  rules:
+  - alert: Vpn_exporter_down
+    expr: up{job="openvpn"} == 0
+    for: 10s
+    annotations:
+      title: 'Vpn Exporter Down'
+      description: 'Vpn Exporter Down'
+    labels:
+      severity: 'crit'
+
+  - alert: VpnDown
+    expr: openvpn_up == 0
+    for: 10s
+    annotations:
+      title: 'VPN Service down'
+      description: 'VPN Service down'
+    labels:
+      severity: 'crit'
+
+  - alert: Vpn_NoClientConnected
+    expr: openvpn_server_connected_clients == 0
+    for: 10s
+    annotations:
+      title: 'No Client Connected'
+      description: 'No Client Connected'
+    labels:
+      severity: 'crit'
+
+- name: prometheus_instance
+  rules:
+  - alert: Monitor_prometheus_exporter_down
+    expr: up{job="prometheus"} == 0
+    for: 10s
+    annotations:
+      title: 'Monitor Node Exporter Down'
+      description: 'Monitor Node Exporter Down'
+    labels:
+      severity: 'crit'
+

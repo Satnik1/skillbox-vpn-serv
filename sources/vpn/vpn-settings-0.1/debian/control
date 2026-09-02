@@ -1,0 +1,14 @@
+Source: vpn-settings
+Section: unknown
+Priority: optional
+Maintainer: Nikita <na@satkanov.ru>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/vpn-settings
+#Vcs-Git: https://salsa.debian.org/debian/vpn-settings.git
+
+Package: vpn-settings
+Architecture: all
+Depends: openvpn
+Description: install vpn settings

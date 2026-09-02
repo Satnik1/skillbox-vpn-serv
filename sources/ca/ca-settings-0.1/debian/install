@@ -1,0 +1,3 @@
+openssl-easyrsa.cnf etc/easy-rsa-custom-conf/
+vars etc/easy-rsa-custom-conf/
+

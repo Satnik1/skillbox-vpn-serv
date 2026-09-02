@@ -1,0 +1,14 @@
+Source: client-conf
+Section: unknown
+Priority: optional
+Maintainer: Nikita <na@satkanov.ru>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/client-conf
+#Vcs-Git: https://salsa.debian.org/debian/client-conf.git
+
+Package: client-conf
+Architecture: all
+Depends: openvpn
+Description: install conf and script

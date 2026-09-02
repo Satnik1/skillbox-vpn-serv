@@ -1,0 +1,8 @@
+#!/bin/bash
+
+IP=$(curl ifconfig.me)
+sed -i "s/remote my-server-1 1194/remote $IP 1194/" /etc/openvpn/clients_config/conf/base.conf
+
+chmod 700 /etc/openvpn/clients_config/conf/make-config.sh
+
+

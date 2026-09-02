@@ -1,0 +1,17 @@
+#!/bin/bash
+# postinst script for prometheus-alertm-settings
+#
+# see: dh_installdeb(1)
+
+set -eu
+
+if [ -z ${PASS_AUTH} ] || [ -z ${AUTH_UNAME} ] || [ -z ${SMTP} ] || [ -z ${EMAIL} ]; then
+  echo "ERROR: not empty variable need" >&2
+  exit 1
+fi
+
+envsubst '${PASS_AUTH} ${AUTH_UNAME} ${SMTP} ${EMAIL}' < /tmp/alertmanager_conf.yml.template > /etc/prometheus-my-settings/alertmanager.yml
+
+chmod +x /usr/bin/apply-prom-settings.sh
+
+/usr/bin/apply-prom-settings.sh

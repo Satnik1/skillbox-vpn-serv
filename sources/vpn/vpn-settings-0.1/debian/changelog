@@ -1,0 +1,12 @@
+vpn-settings (0.1-1ubuntu3) UNRELEASED; urgency=medium
+
+  * 
+  *preinst change   * rm sysctl.conf from deb
+
+ -- Nikita <na@satkanov.ru>  Tue, 29 Jul 2025 15:42:23 +0300
+
+vpn-settings (0.1-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Nikita <na@satkanov.ru>  Mon, 28 Jul 2025 17:47:12 +0300

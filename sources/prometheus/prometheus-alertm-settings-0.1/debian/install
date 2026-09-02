@@ -1,0 +1,4 @@
+etc/prometheus-my-settings etc
+apply-prom-settings.sh  usr/bin
+tmp/alertmanager_conf.yml.template tmp
+

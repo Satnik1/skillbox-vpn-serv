@@ -1,0 +1,2 @@
+base.conf etc/openvpn/clients_config/conf
+make-config.sh etc/openvpn/clients_config/conf

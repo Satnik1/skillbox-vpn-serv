@@ -1,0 +1,2 @@
+Remove-alertmanager.yaml-with-secret,-add-template-for-create-alertmanager.yaml,-add-script-in-postinst-for-check-empty-variable-and-use-envsebs
+change-install-and-postint

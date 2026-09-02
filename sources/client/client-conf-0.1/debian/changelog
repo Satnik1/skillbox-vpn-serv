@@ -1,0 +1,5 @@
+client-conf (0.1-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Nikita <na@satkanov.ru>  Wed, 30 Jul 2025 14:52:21 +0300

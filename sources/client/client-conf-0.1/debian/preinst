@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+set -e
+
+if [ ! -d /etc/openvpn/clients_config/conf ]; then
+    mkdir -p /etc/openvpn/clients_config/conf
+    chmod 700 /etc/openvpn/clients_config/conf
+fi
+
+exit 0
+

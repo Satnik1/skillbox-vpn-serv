@@ -1,0 +1,20 @@
+#!/bin/bash
+
+cp /etc/easy-rsa-custom-conf/openssl-easyrsa.cnf /usr/share/easy-rsa/
+echo -e "\nTo get started:
+
+1. Copy conf:
+	cp /etc/easy-rsa-custom-conf/vars /home/YOUR_USER/easy-rsa/
+	chown YOUR_USER:YOUR_USER /home/YOUR_USER/easy-rsa/vars
+
+2. Edit the following lines in the file vars:
+	set_var EASYRSA_REQ_COUNTRY     
+	set_var EASYRSA_REQ_PROVINCE    
+	set_var EASYRSA_REQ_CITY        
+	set_var EASYRSA_REQ_ORG 
+	set_var EASYRSA_REQ_EMAIL       
+	set_var EASYRSA_REQ_OU"
+	
+
+
+
