@@ -1,0 +1,14 @@
+# Igrnore artfacts of source
+sources/**/*.build
+sources/**/*.buildinfo
+sources/**/*.tar.*
+sources/**/*.changes
+sources/**/*.deb
+
+# Tmp files
+sources/**/debian/.debhelper/
+sources/**/debian/debhelper-build-stamp
+sources/**/debian/files
+sources/**/debian/*-settings/
+sources/**/debian/*-conf/
+sources/**/debian/*.substvars
