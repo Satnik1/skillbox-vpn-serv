@@ -269,7 +269,7 @@ aws s3 cp /tmp/vpn-backup-\$TIMESTAMP.tar.gz s3://backup-inf/openvpn/ --endpoint
 rm -f /tmp/vpn-backup-*.tar.gz
 end
 chmod +x /usr/local/bin/vpn_backup.sh
-bash -c 'echo "0 */2 * * * root /usr/local/bin/vpn_backup.sh" > /etc/cron.hourly/backup'
+bash -c 'echo "0 */2 * * * root /usr/local/bin/vpn_backup.sh" > /etc/cron.d/backup'
 
 
 #create pki and issue a pair of keys. Create server key and req

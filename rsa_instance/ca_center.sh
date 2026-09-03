@@ -187,7 +187,7 @@ aws s3 cp /tmp/rsa-backup-\$TIMESTAMP.tar.gz s3://backup-inf/rsa/ --endpoint-url
 rm -f /tmp/rsa-backup-*.tar.gz
 end
 chmod +x /usr/local/bin/ca_backup.sh
-bash -c 'echo "0 */2 * * * root /usr/local/bin/ca_backup.sh" > /etc/cron.hourly/backup'
+bash -c 'echo "0 */2 * * * root /usr/local/bin/ca_backup.sh" > /etc/cron.d/backup'
 
 
 

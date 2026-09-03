@@ -185,7 +185,7 @@ aws s3 cp /tmp/monitor-backup-\$TIMESTAMP.tar.gz s3://backup-inf/monitor/ --endp
 rm -f /tmp/monitor-backup-*.tar.gz
 end
 chmod +x /usr/local/bin/monitor_backup.sh
-bash -c 'echo "0 */2 * * * root /usr/local/bin/monitor_backup.sh" > /etc/cron.hourly/backup'
+bash -c 'echo "0 */2 * * * root /usr/local/bin/monitor_backup.sh" > /etc/cron.d/backup'
 
 
 
