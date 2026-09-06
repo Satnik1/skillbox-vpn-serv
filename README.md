@@ -72,16 +72,35 @@
 
     # На rsa-instance
     scp ca_center.sh ca-settings_0.1-1_all.deb rsa-user@<rsa_ip>:~/
+    
+    ## Внутри rsa-instance
+    sudo ./название_скрипта.sh
+    sudo dpkg -i название_пакета.deb
+
 
     # На vpn-instance
     scp vpn_center.sh vpn-settings_0.1-1ubuntu3_all.deb client-conf_0.1-1_all.deb vpn-user@<vpn_ip>:~/
-
-    # На prometheus-instance
-    scp prometheus_center.sh prometheus-alertm-settings_0.1-2_all.deb prometheus-user@<prom_ip>:~/
-
-6.2. На каждой ВМ выполните:
+    
+    ## Внутри vpn-instance
     sudo ./название_скрипта.sh
     sudo dpkg -i название_пакета.deb
+
+    # На prometheus-instance
+    scp run_alertm-set.sh prometheus_center.sh prometheus-alertm-settings_0.1-2_all.deb prometheus-user@<prom_ip>:~/
+    
+    ## Внутри prometheus-instance
+    ***см. п. 10***
+    vim ./run_alertm-set.sh 
+    ```   
+    EMAIL = '...'     # Ваша Yandex почта
+    SMTP = '...'  # Пример 'smtp.yandex.ru:587'
+    AUTH_UNAME = '...'     # Логин без @yandex.ru 
+    PASS_AUTH = '...'   # Пароль см. п. 10.1
+    
+    ```    
+    Затем
+    ./run_alertm_set.sh
+
 
 7. Настройка PKI и сертификатов
 --------------------------------
@@ -167,23 +186,7 @@
     4. Нажмите "Создать пароль"
     5. Сохраните сгенерированный пароль (пример: "abracadabra123")
 
-10.2. Редактирование конфига Alertmanager:
-    sudo vim /etc/prometheus/alertmanager.yml
-
-    Замените блок receivers на:
-    ----------------------------
-    receivers:
-    - name: 'admin-alerts'
-      email_configs:
-      - to: 'your_email@yandex.ru'      # Ваша Yandex почта
-        from: 'your_email@yandex.ru'    # Та же почта
-        smarthost: 'smtp.yandex.ru:587'
-        auth_username: 'your_login'     # Логин без @yandex.ru
-        auth_identity: 'your_login'     # Тот же логин
-        auth_password: 'app_password'   # Пароль из п. 10.1
-        require_tls: true
-    ----------------------------
-10.3. Перезапуск Prometheus и Alertmanager
+10.2. Перезапуск Prometheus и Alertmanager
     sudo systemctl restart prometheus
     sudo systemctl restart prometheus-alertmanager
     sudo systemctl status prometheus
